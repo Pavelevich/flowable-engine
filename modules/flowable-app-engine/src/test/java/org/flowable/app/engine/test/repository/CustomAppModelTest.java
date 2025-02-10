@@ -25,31 +25,34 @@ import org.junit.Test;
  * @author Tijs Rademakers
  */
 public class CustomAppModelTest extends FlowableAppTestCase {
-    
+
     @Test
-    public void testAppDefinitionDeployed() throws Exception {
+    public void testAppDefinitionDeployed() {
         AppResourceConverter defaultAppResourceConverter = appEngineConfiguration.getAppResourceConverter();
         appEngineConfiguration.setAppResourceConverter(new CustomAppResourceConverter(appEngineConfiguration.getObjectMapper()));
-        
+
         String deploymentId = null;
         try {
             deploymentId = appRepositoryService.createDeployment().addClasspathResource("org/flowable/app/engine/test/extraInfoApp.app").deploy().getId();
             AppDeployment appDeployment = appRepositoryService.createDeploymentQuery().singleResult();
             assertThat(appDeployment).isNotNull();
-            
+
             AppDefinition appDefinition = appRepositoryService.createAppDefinitionQuery().appDefinitionKey("extraInfoApp").singleResult();
-            
+
             AppModel appModel = appRepositoryService.getAppModel(appDefinition.getId());
             assertThat(appModel).isInstanceOf(CustomAppModel.class);
-            
+
             CustomAppModel customAppModel = (CustomAppModel) appModel;
             assertThat(customAppModel.getKey()).isEqualTo("extraInfoApp");
             assertThat(customAppModel.getName()).isEqualTo("Extra info app");
             assertThat(customAppModel.getExtraProperty()).isEqualTo("test");
-            
+
         } finally {
+            // ensure the original AppResourceConverter is restored
             appEngineConfiguration.setAppResourceConverter(defaultAppResourceConverter);
-            appRepositoryService.deleteDeployment(deploymentId, true);
+            if (deploymentId != null) {
+                appRepositoryService.deleteDeployment(deploymentId, true);
+            }
         }
     }
 
@@ -73,5 +76,4 @@ public class CustomAppModelTest extends FlowableAppTestCase {
             }
         }
     }
-
 }
