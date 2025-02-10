@@ -20,6 +20,7 @@ import org.flowable.app.api.repository.AppModel;
 import org.flowable.app.api.repository.AppResourceConverter;
 import org.flowable.app.engine.test.FlowableAppTestCase;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 
 /**
  * @author Tijs Rademakers
@@ -27,6 +28,7 @@ import org.junit.Test;
 public class CustomAppModelTest extends FlowableAppTestCase {
 
     @Test
+    @DisplayName("Ensure AppDefinition is correctly deployed with custom resource converter")
     public void testAppDefinitionDeployed() {
         AppResourceConverter defaultAppResourceConverter = appEngineConfiguration.getAppResourceConverter();
         appEngineConfiguration.setAppResourceConverter(new CustomAppResourceConverter(appEngineConfiguration.getObjectMapper()));
@@ -57,6 +59,7 @@ public class CustomAppModelTest extends FlowableAppTestCase {
     }
 
     @Test
+    @DisplayName("Ensure AppDefinition is correctly deployed using the default resource converter")
     public void testAppDefinitionDeployedThroughDefaultConverter() {
         String deploymentId = null;
         try {
